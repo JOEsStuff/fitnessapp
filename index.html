@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fitness App — Macro Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Manrope:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green:        #1d6b3b;
+    --green-mid:    #22923f;
+    --green-bright: #28b757;
+    --green-light:  #eaf6ee;
+    --green-pale:   #f0f8f2;
+    --black:        #111714;
+    --dark-card:    #111714;
+    --bg:           #f5f7f4;
+    --white:        #ffffff;
+    --border:       #dde5db;
+    --border2:      #c6d6c3;
+    --text:         #0e1a10;
+    --text2:        #3a5440;
+    --muted:        #7a9078;
+    --shadow:       0 1px 3px rgba(0,0,0,0.05), 0 6px 20px rgba(0,0,0,0.07);
+    --shadow-card:  0 2px 8px rgba(0,0,0,0.06), 0 12px 32px rgba(0,0,0,0.09);
+    --radius:       12px;
+    --radius-lg:    18px;
+    --radius-xl:    22px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  <!--body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Manrope', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }-->
+
+  body {
+    background: url('pic30.jpg') no-repeat center center fixed;
+    background-size: cover;
+    background-attachment: fixed;
+    color: var(--text);
+
+
+  /* ─── NAV ─────────────────────────────────────── */
+  nav {
+    position: sticky; top: 0; z-index: 300;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2.5rem; height: 58px;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem; font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.2px;
+  }
+
+  .nav-links { display: flex; align-items: center; gap: 0.15rem; }
+
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem; font-weight: 500;
+    letter-spacing: 1.8px; text-transform: uppercase;
+    color: var(--muted); text-decoration: none;
+    padding: 0.4rem 0.85rem;
+    border-radius: 4px;
+    transition: color 0.15s;
+  }
+
+  .nav-links a.active {
+    color: var(--green);
+    border-bottom: 2px solid var(--green-bright);
+    padding-bottom: 0.2rem;
+    border-radius: 0;
+  }
+
+  .nav-links a:hover:not(.active) { color: var(--text2); }
+
+  /* ─── HERO ────────────────────────────────────── */
+  .hero {
+    position: relative;
+    min-height: 440px;
+    display: flex; align-items: flex-end;
+    overflow: hidden;
+    background: #e8ede6;
+  }
+
+  /* Right-side food photo — references pic1.jpg (user's file) */
+  .hero-photo {
+    position: absolute; top: 0; right: 0;
+    width: 60%; height: 100%;
+    background-image: url('pic1.jpg');
+    background-size: cover;
+    background-position: center right;
+  }
+
+  /* Fade gradient from left over photo */
+  .hero-photo::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to right, #e8ede6 0%, rgba(232,237,230,0.65) 38%, transparent 62%);
+  }
+
+  /* Bottom fade */
+  .hero-photo::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 30%;
+    background: linear-gradient(to bottom, transparent, rgba(245,247,244,0.5));
+  }
+
+  .hero-content {
+    position: relative; z-index: 2;
+    padding: 4rem 2.5rem 3.5rem;
+    max-width: 520px;
+  }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: var(--green-bright);
+    color: #fff;
+    border-radius: 100px;
+    padding: 0.28rem 0.85rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.54rem; letter-spacing: 2.5px; text-transform: uppercase;
+    margin-bottom: 1.25rem;
+    font-weight: 500;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(3.2rem, 7vw, 5.8rem);
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: -2px;
+    color: var(--text);
+    margin-bottom: 1.2rem;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--green-bright);
+    display: block;
+  }
+
+  .hero p {
+    color: var(--text2);
+    font-size: 0.88rem;
+    line-height: 1.78;
+    font-weight: 400;
+    max-width: 310px;
+  }
+
+  /* ─── MAIN LAYOUT ─────────────────────────────── */
+  .main {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 3rem 2rem 5rem;
+  }
+
+  .calc-grid {
+    display: grid;
+    grid-template-columns: 480px 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  /* ─── FORM CARD ───────────────────────────────── */
+  .form-card {
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    position: sticky; top: 74px;
+  }
+
+  .form-card-header {
+    display: flex; align-items: center; gap: 0.8rem;
+    padding: 1.3rem 1.6rem;
+    border-bottom: 1px solid var(--border);
+    background: #fafcfa;
+  }
+
+  .form-icon {
+    width: 34px; height: 34px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, var(--green), var(--green-mid));
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .form-icon svg { width: 17px; height: 17px; fill: #fff; }
+
+  .form-card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem; font-weight: 700;
+    color: var(--text); letter-spacing: -0.2px;
+  }
+
+  .form-body { padding: 1.5rem 1.6rem 1.7rem; }
+
+  .form-group { margin-bottom: 1.1rem; }
+
+  .form-label {
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.57rem; letter-spacing: 1.8px; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 0.45rem;
+  }
+
+  .unit-sw {
+    font-size: 0.54rem; color: var(--green-bright);
+    cursor: pointer; text-decoration: underline; text-decoration-style: dashed;
+    letter-spacing: 0.5px; text-transform: none; font-family: 'Manrope', sans-serif;
+    font-weight: 500;
+  }
+
+  /* Gender Toggle */
+  .gender-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0.45rem;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 9px; padding: 0.28rem;
+  }
+
+  .g-btn {
+    padding: 0.56rem;
+    border: none; border-radius: 7px;
+    background: transparent;
+    color: var(--muted);
+    font-family: 'Manrope', sans-serif; font-size: 0.82rem; font-weight: 600;
+    cursor: pointer; transition: all 0.18s;
+  }
+
+  .g-btn.active {
+    background: var(--white);
+    color: var(--text);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  }
+
+  /* Goal Buttons */
+  .goal-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.55rem; }
+
+  .goal-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
+    padding: 0.8rem 0.4rem;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+    color: var(--muted);
+    cursor: pointer; transition: all 0.2s;
+    font-family: 'Manrope', sans-serif;
+  }
+
+  .goal-btn .g-ico { font-size: 1.05rem; }
+  .goal-btn .g-lbl { font-size: 0.9rem; font-weight: 800; text-align: center; line-height: 1.3; }
+
+  .goal-btn.active {
+    border-color: var(--green-bright);
+    background: var(--green-pale);
+    color: var(--green);
+    box-shadow: 0 0 0 3px rgba(40,183,87,0.1);
+  }
+
+  .goal-btn:hover:not(.active) { border-color: var(--border2); color: var(--text2); }
+
+  /* Inputs */
+  input[type="number"],
+  input[type="text"],
+  select {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    padding: 0.68rem 0.9rem;
+    font-family: 'Manrope', sans-serif; font-size: 0.88rem; font-weight: 500;
+    outline: none;
+    transition: border-color 0.16s, box-shadow 0.16s;
+    appearance: none; -webkit-appearance: none;
+  }
+
+  input:focus, select:focus {
+    border-color: var(--green-bright);
+    box-shadow: 0 0 0 3px rgba(40,183,87,0.12);
+    background: var(--white);
+  }
+
+  input::placeholder { color: var(--muted); }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; }
+
+  .select-wrap { position: relative; }
+  .select-wrap::after {
+    content: '▾'; position: absolute;
+    right: 0.85rem; top: 50%; transform: translateY(-50%);
+    color: var(--muted); pointer-events: none; font-size: 0.68rem;
+  }
+
+  select option { background: #fff; color: var(--text); }
+
+  .divider { height: 1px; background: var(--border); margin: 1.2rem 0; }
+
+  /* CTA */
+  .btn-cta {
+    width: 100%; padding: 0.92rem;
+    background: linear-gradient(135deg, #28b757, #1d6b3b);
+    color: #fff; border: none;
+    border-radius: 11px;
+    font-family: 'Syne', sans-serif; font-size: 0.75rem; font-weight: 700;
+    letter-spacing: 2.2px; text-transform: uppercase;
+    cursor: pointer; transition: all 0.2s;
+    box-shadow: 0 4px 18px rgba(40,183,87,0.32);
+    margin-top: 0.3rem;
+  }
+
+  .btn-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(40,183,87,0.42); }
+
+  /* ─── RESULTS COL ─────────────────────────────── */
+  #results-col { display: flex; flex-direction: column; gap: 1.25rem; }
+
+  /* Placeholder */
+  .placeholder-state {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; min-height: 300px; text-align: center; gap: 1rem;
+    background: var(--white); border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card);
+    border: 1.5px dashed var(--border2);
+  }
+
+  .placeholder-state p { color: var(--muted); font-size: 0.82rem; line-height: 1.7; }
+
+  /* TDEE card – dark */
+  /* ─── TDEE CARD — NEW LIGHT VERSION ───────────────────────── */
+
+.tdee-card {
+    background: #f9fdf9; /* لون فاتح جداً */
+    border-radius: 26px; /* أكبر */
+    padding: 2.6rem 2.6rem; /* أوسع */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+    border: 1px solid #dceedd; /* حدود فاتحة */
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08); /* شادو خفيف */
+}
+
+/* النصوص */
+.tdee-eyebrow {
+    color: #5c6f5e !important; 
+}
+
+.tdee-num {
+    color: #0e1a10 !important; 
+}
+
+.tdee-num span {
+    color: #738b75 !important;
+}
+
+.goal-eyebrow {
+    color: #5c6f5e !important;
+}
+
+.goal-big {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.6rem; font-weight: 800; letter-spacing: -1px; line-height: 1;
+    color: var(--green-bright);
+  }
+
+.surplus-tag {
+    display: inline-block;
+    background: rgba(40,183,87,0.15);
+    border: 1px solid rgba(40,183,87,0.25);
+    color: var(--green-bright);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.54rem; letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 0.22rem 0.7rem; border-radius: 100px;
+    margin-top: 0.5rem;
+	}
+
+  
+
+  /* Macro Targets card */
+  .macro-card {
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    padding: 1.65rem 1.75rem;
+    box-shadow: var(--shadow-card);
+  }
+
+  .card-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.54rem; letter-spacing: 2.5px; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 1.4rem;
+  }
+
+  .macro-list { display: flex; flex-direction: column; gap: 1.25rem; }
+
+  .macro-row {
+    display: grid; grid-template-columns: 130px 1fr 70px;
+    align-items: center; gap: 1rem;
+  }
+
+  .macro-name {
+    display: flex; align-items: center; gap: 0.55rem;
+  }
+
+  .m-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  .m-label { font-size: 1rem; font-weight: 500; color: var(--text2); }
+
+  .bar-track {
+    height: 6px; background: var(--bg);
+    border-radius: 100px; overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%; border-radius: 100px; width: 0%;
+    transition: width 1s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .bar-fill.p { background: linear-gradient(90deg,#28b757,#5edf8a); }
+  .bar-fill.c { background: linear-gradient(90deg,#2b7ff5,#5fa8ff); }
+  .bar-fill.f { background: linear-gradient(90deg,#a3e635,#c8f558); }
+
+  .macro-val {
+    font-family: 'DM Mono', monospace; font-size: 0.8rem; font-weight: 500;
+    color: var(--text); text-align: right; white-space: nowrap;
+  }
+
+  .macro-val small { color: var(--muted); font-size: 0.64rem; margin-left: 1px; }
+
+  .macro-pct {
+    font-family: 'DM Mono', monospace; font-size: 0.57rem; color: var(--muted);
+    margin-top: 0.18rem;
+  }
+
+  .macro-info {
+    margin-top: 1.2rem; padding: 0.85rem 1rem;
+    background: #f4fbf6; border: 1px solid #c6e8d1;
+    border-radius: 10px;
+    display: flex; align-items: flex-start; gap: 0.65rem;
+  }
+
+  .info-icon {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: rgba(40,183,87,0.18);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.6rem; color: var(--green-bright); flex-shrink: 0;
+    margin-top: 1px; font-weight: 700;
+  }
+
+  .info-text { font-size: 0.72rem; line-height: 1.65; color: var(--text2); }
+  .info-text strong { color: var(--green); font-weight: 600; }
+
+  .condition-box {
+    margin-top: 0.9rem; padding: 0.8rem 0.95rem;
+    background: #fffbeb; border: 1px solid #fcd34d;
+    border-radius: 10px;
+    font-family: 'DM Mono', monospace; font-size: 0.6rem;
+    line-height: 1.7; color: #92400e;
+  }
+
+  /* ─── DAILY BLUEPRINT ─────────────────────────── */
+  .blueprint { margin-top: 3rem; }
+
+  .blueprint-header {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+
+  .bp-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 3rem; font-weight: 800; letter-spacing: -0.5px;
+    color: var(--text);
+  }
+
+  .bp-sub { font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem; }
+
+  .bp-actions { display: flex; gap: 0.6rem; }
+
+  .btn-sm {
+    padding: 0.48rem 1.1rem;
+    border-radius: 100px;
+    font-family: 'DM Mono', monospace; font-size: 0.58rem;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    cursor: pointer; transition: all 0.18s; font-weight: 500;
+  }
+
+  .btn-ghost {
+    background: var(--white); border: 1px solid var(--border2);
+    color: var(--text2);
+  }
+
+  .btn-ghost:hover { border-color: var(--green-bright); color: var(--green); }
+
+  .btn-green {
+    background: var(--green-bright); border: none; color: #fff; font-weight: 700;
+    box-shadow: 0 3px 12px rgba(40,183,87,0.3);
+  }
+
+  .btn-green:hover { background: #22a850; }
+
+  /* Meals Grid */
+  .meals-grid {
+    display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem;
+  }
+
+  .meal-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .meal-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+  }
+
+  .meal-thumb {
+    width: 100%; height: 155px;
+    overflow: hidden; position: relative;
+    background: var(--bg);
+  }
+
+  .meal-thumb img {
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+    transition: transform 0.4s;
+  }
+
+  .meal-card:hover .meal-thumb img { transform: scale(1.05); }
+
+  .meal-body { padding: 0.95rem 1rem; }
+
+  .meal-meta {
+    display: flex; align-items: center; gap: 0.4rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .meal-time-lbl {
+    font-family: 'DM Mono', monospace; font-size: 0.5rem;
+    letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted);
+  }
+
+  .meal-sep {
+    width: 3px; height: 3px; border-radius: 50%;
+    background: var(--green-bright); flex-shrink: 0;
+  }
+
+  .meal-type-lbl {
+    font-family: 'DM Mono', monospace; font-size: 0.5rem;
+    letter-spacing: 1.5px; text-transform: uppercase; color: var(--green);
+    font-weight: 500;
+  }
+
+  .meal-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.2rem; font-weight: 700; letter-spacing: -0.2px;
+    color: var(--text); line-height: 1.3; margin-bottom: 0.32rem;
+  }
+
+  .meal-desc {
+    font-size: 0.81rem; color: var(--muted); line-height: 1.6;
+    margin-bottom: 0.7rem;
+  }
+
+  .meal-stats { display: flex; gap: 0.7rem; align-items: center; }
+
+  .m-stat {
+    display: flex; align-items: center; gap: 0.28rem;
+    font-family: 'DM Mono', monospace; font-size: 0.87rem; color: var(--muted);
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in { animation: fadeUp 0.42s ease both; }
+  .d1 { animation-delay: 0s; }
+  .d2 { animation-delay: 0.1s; }
+  .d3 { animation-delay: 0.2s; }
+
+  /* Counter */
+  @keyframes countUp {
+    from { opacity: 0.4; }
+    to   { opacity: 1; }
+  }
+
+  /* ─── FOOTER ──────────────────────────────────── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2.5rem; text-align: center;
+    background: var(--white);
+  }
+
+  .footer-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem; font-weight: 700; color: var(--text2);
+    margin-bottom: 0.75rem;
+  }
+
+  .footer-links {
+    display: flex; gap: 1.5rem; justify-content: center;
+    margin-bottom: 0.7rem;
+  }
+
+  .footer-links a {
+    font-family: 'DM Mono', monospace; font-size: 0.57rem;
+    letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--muted); text-decoration: none; transition: color 0.15s;
+  }
+
+  .footer-links a:hover { color: var(--green); }
+
+  .footer-copy {
+    font-family: 'DM Mono', monospace; font-size: 0.55rem;
+    letter-spacing: 0.8px; color: var(--muted);
+  }
+
+  /* ─── RESPONSIVE ──────────────────────────────── */
+  @media (max-width: 960px) {
+    .calc-grid { grid-template-columns: 1fr; }
+    .form-card { position: static; }
+    nav { padding: 0 1.25rem; }
+    .main { padding: 2rem 1.25rem 4rem; }
+    .hero-content { padding: 2.5rem 1.25rem 2.5rem; }
+    .meals-grid { grid-template-columns: repeat(2,1fr); }
+    .tdee-card { grid-template-columns: 1fr; gap: 1rem; }
+    .hero-photo { width: 50%; }
+  }
+
+  @media (max-width: 540px) {
+    .meals-grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 3rem; }
+    .hero-photo { width: 45%; }
+  }
+  .user-greeting {
+  background: #f0f8f2;
+  border: 1px solid #c4e3d1;
+  padding: 1rem 1.4rem;
+  border-radius: 16px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--green);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  margin-bottom: 1rem;
+  animation: fadeUp 0.4s ease both;
+}
+.user-greeting span {
+  color: var(--text);
+  font-weight: 700;
+}
+/* Nice Custom Alert */
+.nice-alert {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(6px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.alert-box {
+  background: #ffffff;
+  padding: 1.9rem 2.2rem;
+  border-radius: 20px;
+  max-width: 320px;
+  text-align: center;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+  animation: scaleIn .25s ease;
+}
+
+.alert-icon {
+  font-size: 2.6rem;
+  margin-bottom: 0.7rem;
+}
+
+.alert-message {
+  font-size: 1rem;
+  color: var(--text2);
+  margin-bottom: 1.2rem;
+  line-height: 1.6;
+  font-weight: 600;
+}
+
+.alert-btn {
+  background: var(--green-bright);
+  border: none;
+  padding: 0.6rem 5.4rem;
+  border-radius: 12px;
+  color: white;
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.15s ease;
+}
+
+.alert-btn:hover {
+  background: #21a74e;
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.alert-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.8rem;
+}
+
+.alert-icon svg {
+  width: 58px;
+  height: 58px;
+}
+
+</style>
+</head>
+<body>
+
+<!-- ─── NAV ─────────────────────────────────────── -->
+<nav>
+  <div class="nav-logo">Fitness App</div>
+  <div class="nav-links">
+    <a href="#" class="active">Fitness Calculator</a>
+  </div>
+</nav>
+
+<!-- ─── HERO ─────────────────────────────────────── -->
+<section class="hero">
+  <!-- User puts their pic1.jpg in the same folder -->
+  <div class="hero-photo"></div>
+  <div class="hero-content">
+    <div class="hero-badge">Precision Science</div>
+    <h1>FUEL YOUR<em>POTENTIAL.</em></h1>
+    <p>Advanced biometrics meet editorial nutrition. Calculate your metabolic baseline with expert precision.</p>
+  </div>
+</section>
+
+<!-- ─── MAIN ─────────────────────────────────────── -->
+<main class="main">
+  <div class="calc-grid">
+
+    <!-- FORM CARD -->
+<div class="form-card">
+  <div class="form-card-header">
+    <div class="form-icon">
+      <svg viewBox="0 0 24 24"><path d="M4 4h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4zM4 10h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4zM4 16h4v4H4zm6 0h4v4h-4zm6 0h4v4h-4z"/></svg>
+    </div>
+    <div class="form-card-title">Macro Coach</div>
+  </div>
+
+  <div class="form-body">
+
+    <!-- Gender -->
+    <div class="form-group">
+      <div class="form-label">Gender</div>
+      <div class="gender-row">
+        <button class="g-btn active" id="btn-male" onclick="setGender('male')">Male</button>
+        <button class="g-btn" id="btn-female" onclick="setGender('female')">Female</button>
+      </div>
+    </div>
+
+    <!-- Name -->
+    <div class="form-group">
+      <div class="form-label">Name</div>
+      <input type="text" id="name" placeholder="Enter your name">
+    </div>
+
+    <!-- Age -->
+    <div class="form-group">
+      <div class="form-label">Age</div>
+      <input type="number" id="age" value="" min="10" max="100" placeholder="Enter your age">
+    </div>
+
+    <!-- Weight + Height -->
+    <div class="form-row">
+      <div class="form-group">
+        <div class="form-label">
+          <span id="wt-label">Weight (kg)</span>
+          <span class="unit-sw" onclick="toggleWeight(event)">Switch to lb</span>
+        </div>
+        <input type="number" id="weight" value="" min="20" max="300">
+      </div>
+      <div class="form-group">
+        <div class="form-label">
+          <span id="ht-label">Height (cm)</span>
+          <span class="unit-sw" onclick="toggleHeight(event)">Switch to ft</span>
+        </div>
+        <input type="number" id="height" value="" min="80" max="260">
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Activity -->
+    <div class="form-group">
+      <div class="form-label">Activity Intensity</div>
+      <div class="select-wrap">
+        <select id="activity">
+          <option value="1.2">Sedentary — desk job, no exercise</option>
+          <option value="1.375">Light Active — 1–3 days/week</option>
+          <option value="1.55">Moderate — 3–5 days/week</option>
+          <option value="1.725" selected>Very Active — 6–7 days/week</option>
+          <option value="1.9">Athlete — hard daily training</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Goal -->
+    <div class="form-group">
+      <div class="form-label">Primary Health Goal</div>
+      <div class="goal-row">
+        <button class="goal-btn" id="g-lose" onclick="setGoal('-500')">
+          <span class="g-ico"></span>
+          <span class="g-lbl">Lose Weight</span>
+        </button>
+		<button class="goal-btn" id="g-maintain" onclick="setGoal('0')">
+          <span class="g-ico"></span>
+          <span class="g-lbl">Maintain</span>
+        </button>
+        <button class="goal-btn active" id="g-gain" onclick="setGoal('300')">
+          <span class="g-ico"></span>
+          <span class="g-lbl">Gain Muscle</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Condition -->
+    <div class="form-group">
+      <div class="form-label">Health Condition <span style="color:var(--muted);font-size:0.95em;text-transform:none;letter-spacing:0">(optional)</span></div>
+      <input type="text" id="disease" placeholder="e.g. diabetes, heart disease…">
+    </div>
+
+    <button class="btn-cta" onclick="calculate()">Generate Nutrition Blueprint</button>
+  </div>
+</div>
+
+    <!-- RESULTS -->
+    <div id="results-col">
+      <div class="placeholder-state">
+        <div style="font-size:2.5rem"></div>
+        <p>Fill in your stats on the left<br>to generate your nutrition blueprint.</p>
+      </div>
+    </div>
+
+  </div><!-- /calc-grid -->
+
+  <!-- DAILY BLUEPRINT -->
+  <section class="blueprint" id="blueprint" style="display:none">
+    <div class="blueprint-header">
+      <div>
+        <div class="bp-title">Daily Blueprint</div>
+        <div class="bp-sub" id="bp-sub">Recommended meal structure</div>
+      </div>
+      <div class="bp-actions">
+        <button class="btn-sm btn-ghost" onclick="window.print()">Download PDF</button>-->
+        <button class="btn-sm btn-green" onclick="swapMeals()">Swap Meals</button>
+      </div>
+    </div>
+    <div class="meals-grid" id="meals-grid"></div>
+  </section>
+</main>
+
+<!-- ─── FOOTER ─────────────────────────────────── -->
+<footer>
+  <div class="footer-logo">Fitness App</div>
+  <div class="footer-links">
+    <a href="#">Contact</a>
+  </div>
+  <div class="footer-copy">© 2026 Fitness App. Precision Health Science.</div>
+</footer>
+<div id="nice-alert" class="nice-alert">
+  <div class="alert-box">
+
+    <div class="alert-icon">
+      <!-- Warning SVG -->
+      <svg width="64" height="64" viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          d="M12 2L1 21h22L12 2z"
+          fill="#EF4444"
+          stroke="#F59E0B"
+          stroke-width="1.5"
+        />
+        <rect x="11" y="8" width="2" height="7" rx="1" fill="#FEF3C7"/>
+        <circle cx="12" cy="18" r="1.2" fill="#FEF3C7"/>
+      </svg>
+    </div>
+
+    <div class="alert-message">Please fill in all fields.</div>
+    <button class="alert-btn" onclick="closeAlert()">OK</button>
+
+  </div>
+</div>
+  </div>
+</div>
+<script>
+/* ── STATE ──────────────────────────────────────── */
+let gender = 'male', currentGoal = '300', wtUnit = 'kg', htUnit = 'cm', mealIdx = 0;
+
+/* ── SETTERS ────────────────────────────────────── */
+function setGender(g) {
+  gender = g;
+  document.getElementById('btn-male').classList.toggle('active', g === 'male');
+  document.getElementById('btn-female').classList.toggle('active', g === 'female');
+}
+
+function setGoal(v) {
+  currentGoal = v;
+  ['g-lose','g-gain','g-maintain'].forEach(id => document.getElementById(id).classList.remove('active'));
+  const map = {'-500':'g-lose','300':'g-gain','0':'g-maintain'};
+  document.getElementById(map[v]).classList.add('active');
+}
+
+function toggleWeight(e) {
+  const inp = document.getElementById('weight');
+  const lbl = document.getElementById('wt-label');
+  if (wtUnit === 'kg') {
+    inp.value = Math.round(parseFloat(inp.value) * 2.205);
+    lbl.textContent = 'Weight (lb)'; e.target.textContent = 'Switch to kg'; wtUnit = 'lb';
+  } else {
+    inp.value = Math.round(parseFloat(inp.value) / 2.205);
+    lbl.textContent = 'Weight (kg)'; e.target.textContent = 'Switch to lb'; wtUnit = 'kg';
+  }
+}
+
+function toggleHeight(e) {
+  const inp = document.getElementById('height');
+  const lbl = document.getElementById('ht-label');
+  if (htUnit === 'cm') {
+    const cm = parseFloat(inp.value), ft = Math.floor(cm/30.48), inc = Math.round((cm/2.54)%12);
+    inp.value = ft + '.' + String(inc).padStart(2,'0');
+    lbl.textContent = 'Height (ft)'; e.target.textContent = 'Switch to cm'; htUnit = 'ft';
+  } else {
+    const p = String(inp.value).split('.');
+    inp.value = Math.round((parseInt(p[0]||0)*12 + parseInt(p[1]||0))*2.54);
+    lbl.textContent = 'Height (cm)'; e.target.textContent = 'Switch to ft'; htUnit = 'cm';
+  }
+}
+
+/* ── UTILS ─────────────────────────────────────── */
+function getWeightKg() {
+  const v = parseFloat(document.getElementById('weight').value);
+  return wtUnit === 'lb' ? v/2.205 : v;
+}
+function getHeightCm() {
+  const v = parseFloat(document.getElementById('height').value);
+  if (htUnit === 'ft') { const p = String(v).split('.'); return (parseInt(p[0]||0)*12+parseInt(p[1]||0))*2.54; }
+  return v;
+}
+
+function animateVal(el, to, dur=850) {
+  const from = parseInt(el.textContent)||0, range = to-from, t0 = performance.now();
+  (function tick(now) {
+    const p = Math.min((now-t0)/dur,1), e = 1-Math.pow(1-p,3);
+    el.textContent = Math.round(from+range*e);
+    if(p<1) requestAnimationFrame(tick);
+  })(t0);
+}
+
+/* ── MEAL DATA ─────────────────────────────────── */
+/* 
+   Images reference pic2.jpg, pic3.jpg, pic4.jpg, pic5.jpg, pic6.jpg, pic7.jpg
+   placed by user in the same folder as this HTML file.
+*/
+const MEALS = {
+  diabetes: [[
+    { time:'07:30 AM', type:'BREAKFAST', img:'pic2.jpg', name:'Eggs & Grain Toast', desc:'Poached eggs with whole grain toast and fresh avocado.', kcal:420, p:28 },
+    { time:'01:00 PM', type:'LUNCH',     img:'pic3.jpg', name:'Grilled Fish & Quinoa', desc:'Tilapia fillet with tri-color quinoa and mixed greens.', kcal:560, p:42 },
+    { time:'04:30 PM', type:'SNACK',     img:'pic4.jpg', name:'Nuts & Berries Bowl', desc:'Almonds with fresh blueberries and a drizzle of honey.', kcal:210, p:7 },
+    { time:'08:00 PM', type:'DINNER',    img:'pic5.jpg', name:'Chicken & Steamed Veg', desc:'Grilled chicken with steamed broccoli and carrots.', kcal:480, p:44 },
+  ]],
+  heart: [[
+    { time:'07:30 AM', type:'BREAKFAST', img:'pic6.jpg', name:'Oats, Berries & Walnuts', desc:'Steel-cut oats topped with berries and crushed walnuts.', kcal:390, p:14 },
+    { time:'01:00 PM', type:'LUNCH',     img:'pic7.jpg', name:'Salmon & Brown Rice', desc:'Wild-caught salmon with brown rice and asparagus.', kcal:620, p:48 },
+    { time:'04:30 PM', type:'SNACK',     img:'pic8.jpg', name:'Apple & Almond Butter', desc:'Sliced apple with natural almond butter.', kcal:190, p:5 },
+    { time:'08:00 PM', type:'DINNER',    img:'pic9.jpg', name:'Lentil Soup', desc:'Hearty lentil soup with whole wheat pita bread.', kcal:450, p:24 },
+  ]],
+  lose: [
+    [
+      { time:'07:30 AM', type:'BREAKFAST', img:'pic10.jpg', name:'Greek Yogurt Bowl', desc:'Greek yogurt with mixed seasonal fruits and honey.', kcal:320, p:25 },
+      { time:'01:00 PM', type:'LUNCH',     img:'pic11.jpg', name:'Grilled Chicken Salad', desc:'Chicken breast with romaine, cherry tomatoes and vinaigrette.', kcal:440, p:38 },
+      { time:'04:30 PM', type:'SNACK',     img:'pic12.jpg', name:'Veggies & Hummus', desc:'Sliced cucumber and bell pepper with creamy hummus.', kcal:160, p:6 },
+      { time:'08:00 PM', type:'DINNER',    img:'pic13.jpg', name:'Tuna & Broccoli', desc:'Seared tuna steak with steamed broccoli and lemon.', kcal:380, p:40 },
+    ],
+    [
+      { time:'07:30 AM', type:'BREAKFAST', img:'pic14.jpg', name:'Veggie Omelette', desc:'Three-egg omelette with spinach, mushroom and feta.', kcal:310, p:22 },
+      { time:'01:00 PM', type:'LUNCH',     img:'pic15.jpg', name:'Quinoa Power Bowl', desc:'Quinoa, chickpeas, cucumber and tahini dressing.', kcal:420, p:18 },
+      { time:'04:30 PM', type:'SNACK',     img:'pic16.jpg', name:'Cottage Cheese', desc:'Low-fat cottage cheese with cherry tomatoes.', kcal:140, p:16 },
+      { time:'08:00 PM', type:'DINNER',    img:'pic17.jpg', name:'Turkey Lettuce Wraps', desc:'Ground turkey in crisp lettuce cups with salsa.', kcal:390, p:34 },
+    ]
+  ],
+  gain: [
+    [
+      { time:'07:30 AM', type:'BREAKFAST', img:'pic18.jpg', name:'Protein Power Bowl', desc:'Greek yogurt, hemp seeds, blueberries and rolled oats.', kcal:520, p:35 },
+      { time:'01:00 PM', type:'LUNCH',     img:'pic19.jpg', name:'Quinoa & Grill Plate', desc:'Grilled chicken breast with tri-color quinoa and asparagus.', kcal:780, p:48 },
+      { time:'04:30 PM', type:'POST-WORKOUT', img:'pic20.jpg', name:'Iso-Whey Shake', desc:'Whey isolate with a banana and handful of raw almonds.', kcal:340, p:30 },
+      { time:'08:00 PM', type:'DINNER',    img:'pic21.jpg', name:'Omega Salmon Roast', desc:'Wild caught salmon with roasted sweet potatoes and kale.', kcal:920, p:52 },
+    ],
+    [
+      { time:'07:30 AM', type:'BREAKFAST', img:'pic22.jpg', name:'Protein Pancakes', desc:'Oat-based protein pancakes with banana and maple syrup.', kcal:560, p:38 },
+      { time:'01:00 PM', type:'LUNCH',     img:'pic23.jpg', name:'Beef & Rice Bowl', desc:'Lean ground beef with jasmine rice and teriyaki glaze.', kcal:820, p:52 },
+      { time:'04:30 PM', type:'POST-WORKOUT', img:'pic24.jpg', name:'Recovery Smoothie', desc:'Banana, oats, peanut butter, whey and whole milk.', kcal:480, p:36 },
+      { time:'08:00 PM', type:'DINNER',    img:'pic25.jpg', name:'Steak & Sweet Potato', desc:'Sirloin steak with roasted sweet potato and broccoli.', kcal:880, p:58 },
+    ]
+  ],
+  maintain: [[
+    { time:'07:30 AM', type:'BREAKFAST', img:'pic26.jpg', name:'Eggs & Whole Grain', desc:'Scrambled eggs with whole grain toast and avocado.', kcal:450, p:28 },
+    { time:'01:00 PM', type:'LUNCH',     img:'pic27.jpg', name:'Chicken & Rice', desc:'Grilled chicken with brown rice, veg and tzatziki.', kcal:620, p:44 },
+    { time:'04:30 PM', type:'SNACK',     img:'pic28.jpg', name:'Banana & Nuts', desc:'Banana with a handful of mixed nuts.', kcal:210, p:5 },
+    { time:'08:00 PM', type:'DINNER',    img:'pic29.jpg', name:'Yogurt & Fruits', desc:'Full-fat yogurt with seasonal fruits and granola.', kcal:380, p:20 },
+  ]],
+};
+
+function getMealKey(goal, disease) {
+  const d = (disease||'').toLowerCase();
+  if (d.includes('diabet')) return { key:'diabetes', label:'Adjusted for Diabetic-Friendly Nutrition' };
+  if (d.includes('heart')||d.includes('pressure')) return { key:'heart', label:'Adjusted for Cardiovascular Health' };
+  if (goal==='-500') return { key:'lose', label:'Optimized for Fat Loss' };
+  if (goal==='300')  return { key:'gain', label:'Recommended Meal Structure for Lean Mass Gain' };
+  return { key:'maintain', label:'Balanced for Weight Maintenance' };
+}
+
+function renderMeals(key, idx) {
+  const set = MEALS[key][idx] || MEALS[key][0];
+  document.getElementById('meals-grid').innerHTML = set.map(m => `
+    <div class="meal-card">
+      <div class="meal-thumb">
+        <img src="${m.img}" alt="${m.name}" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='var(--green-light)';this.parentElement.style.display='flex';this.parentElement.style.alignItems='center';this.parentElement.style.justifyContent='center';this.parentElement.innerHTML='<span style=font-size:3rem></span>'">
+      </div>
+      <div class="meal-body">
+        <div class="meal-meta">
+          <span class="meal-time-lbl">${m.time}</span>
+          <span class="meal-sep"></span>
+          <span class="meal-type-lbl">${m.type}</span>
+        </div>
+        <div class="meal-name">${m.name}</div>
+        <div class="meal-desc">${m.desc}</div>
+        <div class="meal-stats">
+          <div class="m-stat"> ${m.kcal} kcal</div>
+          <div class="m-stat"> ${m.p}g P</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function swapMeals() {
+  const { key } = getMealKey(currentGoal, document.getElementById('disease').value);
+  if ((MEALS[key]||[]).length > 1) {
+    mealIdx = (mealIdx+1) % MEALS[key].length;
+    renderMeals(key, mealIdx);
+  }
+}
+
+/* ── CALCULATE ─────────────────────────────────── */
+function calculate() {
+  const age = parseFloat(document.getElementById('age').value);
+  const wkg = getWeightKg(), hcm = getHeightCm();
+  const act = parseFloat(document.getElementById('activity').value);
+  const goal = currentGoal, disease = document.getElementById('disease').value;
+
+  function showAlert(html) {
+  document.querySelector('.alert-message').innerHTML = html;
+  document.getElementById('nice-alert').style.display = 'flex';
+}
+if (!age || !wkg || !hcm) {
+  showAlert(`
+    <div class="alert-title">Please fill in</div>
+    <div class="alert-text">Age, Weight and Height</div>
+  `);
+  return;
+}
+
+
+
+  const bmr = gender==='male'
+    ? 10*wkg + 6.25*hcm - 5*age + 5
+    : 10*wkg + 6.25*hcm - 5*age - 161;
+
+  const tdee = Math.round(bmr * act);
+  const cal  = tdee + parseInt(goal);
+  const adj  = parseInt(goal);
+
+  const protG = Math.round(wkg*2.2);
+  const fatG  = Math.round((cal*0.20)/9);
+  const protK = protG*4, fatK = fatG*9;
+  const carbK = cal - protK - fatK;
+  const carbG = Math.round(carbK/4);
+
+  const total = protK + fatK + carbK;
+  const pPct  = Math.round((protK/total)*100);
+  const fPct  = Math.round((fatK/total)*100);
+  const cPct  = 100 - pPct - fPct;
+  const maxP  = Math.max(pPct,cPct,fPct);
+
+  const goalLbl = adj>0 ? 'Muscle Gain' : adj<0 ? 'Fat Loss' : 'Maintenance';
+  const surplusLbl = adj>0 ? `+${adj} surplus` : adj<0 ? `${adj} deficit` : 'maintenance';
+
+  const infoMap = {
+    '-500':'These ratios are optimized for <strong>Fat Loss</strong> — high protein preserves lean muscle while in caloric deficit.',
+    '300': 'These ratios are optimized for <strong>Hypertrophy (Muscle Growth)</strong> based on your activity level.',
+    '0':   'These ratios are balanced for <strong>Weight Maintenance</strong> — sustainable macros for your lifestyle.',
+  };
+
+  const username = document.getElementById('name').value || "Friend";
+
+document.getElementById('results-col').innerHTML = `
+  <div class="user-greeting">
+    Hello <span>${username}</span> 👋 — here is your personalized nutrition plan.
+  </div>
+
+  <div class="tdee-card fade-in d1">
+    <div>
+      <div class="tdee-eyebrow">Estimated TDEE</div>
+      <div class="tdee-num"><span id="tdee-el">0</span><span>kcal/day</span></div>
+      <div class="tdee-divider"></div>
+    </div>
+    <div>
+      <div class="goal-eyebrow">Goal Target (${goalLbl})</div>
+      <div class="goal-big" id="cal-el">0</div>
+      <div class="surplus-tag">${surplusLbl}</div>
+    </div>
+  </div>
+
+  <div class="macro-card fade-in d2">
+    <div class="card-eyebrow">Macronutrient Targets</div>
+    <div class="macro-list">
+
+      <div class="macro-row">
+        <div class="macro-name">
+          <div class="m-dot" style="background:#28b757"></div>
+          <div class="m-label">Protein</div>
+        </div>
+        <div>
+          <div class="bar-track"><div class="bar-fill p" id="bar-p"></div></div>
+          <div class="macro-pct">${pPct}%</div>
+        </div>
+        <div class="macro-val">${protG}g <small>/ ${pPct}%</small></div>
+      </div>
+
+      <div class="macro-row">
+        <div class="macro-name">
+          <div class="m-dot" style="background:#2b7ff5"></div>
+          <div class="m-label">Carbohydrates</div>
+        </div>
+        <div>
+          <div class="bar-track"><div class="bar-fill c" id="bar-c"></div></div>
+          <div class="macro-pct">${cPct}%</div>
+        </div>
+        <div class="macro-val">${carbG}g <small>/ ${cPct}%</small></div>
+      </div>
+
+      <div class="macro-row">
+        <div class="macro-name">
+          <div class="m-dot" style="background:#a3e635"></div>
+          <div class="m-label">Healthy Fats</div>
+        </div>
+        <div>
+          <div class="bar-track"><div class="bar-fill f" id="bar-f"></div></div>
+          <div class="macro-pct">${fPct}%</div>
+        </div>
+        <div class="macro-val">${fatG}g <small>/ ${fPct}%</small></div>
+      </div>
+
+    </div>
+
+    <div class="macro-info">
+      <div class="info-icon">ℹ</div>
+      <div class="info-text">${infoMap[goal]}</div>
+    </div>
+
+    ${disease ? `
+      <div class="condition-box">
+        ⚠ Meals adjusted for: ${disease}. Always consult your healthcare professional before making dietary changes.
+      </div>` : ''}
+
+  </div>
+`;
+
+  setTimeout(() => {
+    animateVal(document.getElementById('tdee-el'), tdee);
+    animateVal(document.getElementById('cal-el'),  cal);
+    setTimeout(() => {
+      document.getElementById('bar-p').style.width = (pPct/maxP*100)+'%';
+      document.getElementById('bar-c').style.width = (cPct/maxP*100)+'%';
+      document.getElementById('bar-f').style.width = (fPct/maxP*100)+'%';
+    }, 200);
+  }, 30);
+
+  // Blueprint
+  const { key, label } = getMealKey(goal, disease);
+  mealIdx = 0;
+  document.getElementById('blueprint').style.display = 'block';
+  document.getElementById('bp-sub').textContent = label;
+  renderMeals(key, 0);
+}
+
+/* ── INIT ──────────────────────────────────────── */
+window.addEventListener('load', calculate);
+function showAlert(msg) {
+  document.querySelector('.alert-message').textContent = msg;
+  document.getElementById('nice-alert').style.display = 'flex';
+}
+
+function closeAlert() {
+  document.getElementById('nice-alert').style.display = 'none';
+}
+
+</script>
+</body>
+</html>

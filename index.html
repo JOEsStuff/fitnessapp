@@ -567,19 +567,29 @@ nav {
   font-weight: 800;
   letter-spacing: -0.5px;
   display: flex;
-  flex-direction: column;   /* ✅ STACK VERTICALLY */
+  flex-direction: column; /* Blue print تحت Daily */
   line-height: 1;
 }
 
 /* Daily */
 .bp-daily {
-  color: #ffffff;
+  color: var(--text); /* أو white لو حابب */
 }
 
-/* Blueprint */
-.bp-blue {
-  color: #2b7ff5;
-  margin-top: 0.15rem;      /* subtle spacing */
+/* السطر التاني */
+.bp-row {
+  display: flex;
+  gap: 0.35rem;
+}
+
+/* Blue فقط */
+.bp-blue-word {
+  color: #2b7ff5; /* الأزرق */
+}
+
+/* print عادي */
+.bp-normal-word {
+  color: var(--text);
 }
 .bp-sub {
   font-size: 0.8rem;
@@ -1017,7 +1027,10 @@ nav {
     <div>
      <div class="bp-title">
   <span class="bp-daily">Daily</span>
-  <span class="bp-blue">Blueprint</span>
+  <span class="bp-row">
+    <span class="bp-blue-word">Blue</span>
+    <span class="bp-normal-word">print</span>
+  </span>
 </div>
       <div class="bp-sub" id="bp-sub">Recommended meal structure</div>
     </div>

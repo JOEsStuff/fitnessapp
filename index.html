@@ -658,56 +658,70 @@
     .hero h1 { font-size: 3rem; }
     .hero-photo { width: 45%; }
   }*/
-	@media (max-width: 600px) {
-
-  .hero h1 {
-    font-size: 2.1rem;              /* slightly smaller */
-    line-height: 1.15;              /* more breathing room */
-    letter-spacing: -1px;           /* loosen tracking */
-    word-break: break-word;         /* ✅ allow breaks */
-    overflow-wrap: anywhere;        /* ✅ force wrap */
-  }
-
-  .hero h1 em {
-    display: block;
-    word-break: break-word;
-  }
+	
+	/*Desktop rules*/
+	.hero {
+  position: relative;
+  min-height: 440px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  background: #e8ede6;
 }
 
-  /* HERO becomes stacked */
+.hero-photo {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 60%;
+  height: 100%;
+}
+/*------------------Mobile rules------------------*/
+	@media (max-width: 600px) {
+
+  /* Stack hero on mobile */
   .hero {
-    display: flex;
     flex-direction: column;
-	align-items: stretch;   /* ✅ CRITICAL FIX */
+    align-items: stretch;
     min-height: auto;
     background: transparent;
   }
 
-  /* ✅ critical reset */
+  /* Reset hero image */
   .hero-photo {
-    position: relative;      /* removes absolute positioning */
-    inset: auto;             /* cancels top/right */
+    position: relative;
+    top: auto;
+    right: auto;
+    inset: auto;
     width: 100%;
     height: 240px;
     background-size: cover;
-    background-position: center;
+    background-position: center 35%;
   }
 
-  /* remove desktop-only effects */
+  /* Remove desktop gradients */
   .hero-photo::before,
   .hero-photo::after {
     display: none;
   }
 
-  /* content flows naturally */
+  /* Content spacing */
   .hero-content {
     max-width: 100%;
     padding: 1.5rem 1.25rem 2rem;
   }
 
+  /* Fix heading clipping */
   .hero h1 {
-    font-size: 2.3rem;
+    font-size: 2.1rem;
     line-height: 1.15;
+    letter-spacing: -1px;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  .hero h1 em {
+    display: block;
   }
 
   .hero p {

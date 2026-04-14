@@ -110,7 +110,7 @@
     width: 60%; height: 100%;
     background-image: url('pic1.jpg');
     background-size: cover;
-    background-position: center right;
+    background-position: center 35%;
   }
 
   /* Fade gradient from left over photo */
@@ -642,7 +642,7 @@
   }
 
   /* ─── RESPONSIVE ──────────────────────────────── */
-  @media (max-width: 960px) {
+ /* @media (max-width: 960px) {
     .calc-grid { grid-template-columns: 1fr; }
     .form-card { position: static; }
     nav { padding: 0 1.25rem; }
@@ -657,7 +657,50 @@
     .meals-grid { grid-template-columns: 1fr; }
     .hero h1 { font-size: 3rem; }
     .hero-photo { width: 45%; }
+  }*/
+	@media (max-width: 600px) {
+
+  /* HERO becomes stacked */
+  .hero {
+    display: flex;
+    flex-direction: column;
+	align-items: stretch;   /* ✅ CRITICAL FIX */
+    min-height: auto;
+    background: transparent;
   }
+
+  /* ✅ critical reset */
+  .hero-photo {
+    position: relative;      /* removes absolute positioning */
+    inset: auto;             /* cancels top/right */
+    width: 100%;
+    height: 240px;
+    background-size: cover;
+    background-position: center;
+  }
+
+  /* remove desktop-only effects */
+  .hero-photo::before,
+  .hero-photo::after {
+    display: none;
+  }
+
+  /* content flows naturally */
+  .hero-content {
+    max-width: 100%;
+    padding: 1.5rem 1.25rem 2rem;
+  }
+
+  .hero h1 {
+    font-size: 2.3rem;
+    line-height: 1.15;
+  }
+
+  .hero p {
+    max-width: 100%;
+    font-size: 0.9rem;
+  }
+}
   .user-greeting {
   background: #f0f8f2;
   border: 1px solid #c4e3d1;

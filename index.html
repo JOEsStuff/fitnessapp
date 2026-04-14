@@ -855,7 +855,35 @@ nav {
   width: 58px;
   height: 58px;
 }
+/* ───────── MOBILE FIXES ───────── */
+@media (max-width: 600px) {
 
+  nav {
+    padding: 0 1rem;
+  }
+
+  .calc-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .form-card {
+    position: static !important;
+  }
+
+  .main {
+    padding: 1.5rem 1rem 3rem;
+  }
+
+  .hero {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .hero-photo {
+    width: 100%;
+    height: 42svh;
+  }
+}
 </style>
 </head>
 <body>

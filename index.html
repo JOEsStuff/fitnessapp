@@ -96,79 +96,8 @@
   .nav-links a:hover:not(.active) { color: var(--text2); }
 
   /* ─── HERO ────────────────────────────────────── */
-  .hero {
-    position: relative;
-    min-height: 440px;
-    display: flex; align-items: flex-end;
-    overflow: hidden;
-    background: #e8ede6;
-  }
-
-  /* Right-side food photo — references pic1.jpg (user's file) */
-  .hero-photo {
-    position: absolute; top: 0; right: 0;
-    width: 60%; height: 100%;
-    background-image: url('pic1.jpg');
-    background-size: cover;
-    background-position: center right;
-  }
-
-  /* Fade gradient from left over photo */
-  .hero-photo::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: linear-gradient(to right, #e8ede6 0%, rgba(232,237,230,0.65) 38%, transparent 62%);
-  }
-
-  /* Bottom fade */
-  .hero-photo::after {
-    content: '';
-    position: absolute; bottom: 0; left: 0; right: 0; height: 30%;
-    background: linear-gradient(to bottom, transparent, rgba(245,247,244,0.5));
-  }
-
-  .hero-content {
-    position: relative; z-index: 2;
-    padding: 4rem 2.5rem 3.5rem;
-    max-width: 520px;
-  }
-
-  .hero-badge {
-    display: inline-flex; align-items: center; gap: 0.5rem;
-    background: var(--green-bright);
-    color: #fff;
-    border-radius: 100px;
-    padding: 0.28rem 0.85rem;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.54rem; letter-spacing: 2.5px; text-transform: uppercase;
-    margin-bottom: 1.25rem;
-    font-weight: 500;
-  }
-
-  .hero h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(3.2rem, 7vw, 5.8rem);
-    font-weight: 800;
-    line-height: 0.9;
-    letter-spacing: -2px;
-    color: var(--text);
-    margin-bottom: 1.2rem;
-  }
-
-  .hero h1 em {
-    font-style: italic;
-    color: var(--green-bright);
-    display: block;
-  }
-
-  .hero p {
-    color: var(--text2);
-    font-size: 0.88rem;
-    line-height: 1.78;
-    font-weight: 400;
-    max-width: 310px;
-  }
-
+.hero {
+    position: relative
   /* ─── MAIN LAYOUT ─────────────────────────────── */
   .main {
     max-width: 1140px;

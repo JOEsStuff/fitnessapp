@@ -660,6 +660,20 @@
   }*/
 	@media (max-width: 600px) {
 
+  .hero h1 {
+    font-size: 2.1rem;              /* slightly smaller */
+    line-height: 1.15;              /* more breathing room */
+    letter-spacing: -1px;           /* loosen tracking */
+    word-break: break-word;         /* ✅ allow breaks */
+    overflow-wrap: anywhere;        /* ✅ force wrap */
+  }
+
+  .hero h1 em {
+    display: block;
+    word-break: break-word;
+  }
+}
+
   /* HERO becomes stacked */
   .hero {
     display: flex;

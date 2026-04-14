@@ -96,7 +96,7 @@
   .nav-links a:hover:not(.active) { color: var(--text2); }
 
   /* ─── HERO ────────────────────────────────────── */
-.hero {
+  .hero {
     position: relative;
     min-height: 440px;
     display: flex; align-items: flex-end;
@@ -168,6 +168,7 @@
     font-weight: 400;
     max-width: 310px;
   }
+
   /* ─── MAIN LAYOUT ─────────────────────────────── */
   .main {
     max-width: 1140px;
@@ -641,7 +642,7 @@
   }
 
   /* ─── RESPONSIVE ──────────────────────────────── */
- /* @media (max-width: 960px) {
+  @media (max-width: 960px) {
     .calc-grid { grid-template-columns: 1fr; }
     .form-card { position: static; }
     nav { padding: 0 1.25rem; }
@@ -656,7 +657,7 @@
     .meals-grid { grid-template-columns: 1fr; }
     .hero h1 { font-size: 3rem; }
     .hero-photo { width: 45%; }
-  }*/
+  }
   .user-greeting {
   background: #f0f8f2;
   border: 1px solid #c4e3d1;
@@ -739,47 +740,7 @@
   width: 58px;
   height: 58px;
 }
-@media (max-width: 600px) {
 
-  /* STACK HERO */
-  .hero {
-    display: flex;
-    flex-direction: column;
-    min-height: auto;
-    background: transparent;
-  }
-
-  /* RESET IMAGE BEHAVIOR */
-  .hero-photo {
-    position: relative;      /* ← critical */
-    width: 100%;             /* ← full width */
-    height: 240px;           /* ← controlled height */
-    background-position: center;
-    background-size: cover;
-  }
-
-  /* REMOVE DESKTOP GRADIENTS */
-  .hero-photo::before,
-  .hero-photo::after {
-    display: none;
-  }
-
-  /* CONTENT BELOW IMAGE */
-  .hero-content {
-    padding: 1.5rem 1.25rem 2rem;
-    max-width: 100%;
-  }
-
-  .hero h1 {
-    font-size: 2.3rem;
-    line-height: 1.15;
-  }
-
-  .hero p {
-    font-size: 0.9rem;
-    max-width: 100%;
-  }
-}
 </style>
 </head>
 <body>

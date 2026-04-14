@@ -567,19 +567,20 @@ nav {
   font-weight: 800;
   letter-spacing: -0.5px;
   display: flex;
-  gap: 0.5rem;
+  flex-direction: column;   /* ✅ STACK VERTICALLY */
+  line-height: 1;
 }
 
-/* Daily = white */
+/* Daily */
 .bp-daily {
   color: #ffffff;
 }
 
-/* Blueprint = blue */
+/* Blueprint */
 .bp-blue {
   color: #2b7ff5;
+  margin-top: 0.15rem;      /* subtle spacing */
 }
-
 .bp-sub {
   font-size: 0.8rem;
   color: var(--muted);

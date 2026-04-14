@@ -889,6 +889,11 @@ nav {
     height: 42svh;
   }
 }
+	/* ─── REQUIRED FIELD ERROR ─── */
+.input-error {
+  border-color: #ef4444 !important; /* Red */
+  box-shadow: 0 0 0 3px rgba(239,68,68,0.25) !important;
+
 </style>
 </head>
 <body>
@@ -1237,23 +1242,50 @@ function swapMeals() {
 
 /* ── CALCULATE ─────────────────────────────────── */
 function calculate() {
-  const age = parseFloat(document.getElementById('age').value);
-  const wkg = getWeightKg(), hcm = getHeightCm();
-  const act = parseFloat(document.getElementById('activity').value);
-  const goal = currentGoal, disease = document.getElementById('disease').value;
+ const ageEl = document.getElementById('age');
+const weightEl = document.getElementById('weight');
+const heightEl = document.getElementById('height');
 
-  function showAlert(html) {
-  document.querySelector('.alert-message').innerHTML = html;
-  document.getElementById('nice-alert').style.display = 'flex';
+const age = parseFloat(ageEl.value);
+const wkg = getWeightKg();
+const hcm = getHeightCm();
+
+
+[ageEl, weightEl, heightEl].forEach(el =>
+  el.classList.remove('input-error')
+);
+
+let firstInvalid = null;
+
+if (!age) {
+  ageEl.classList.add('input-error');
+  firstInvalid = firstInvalid || ageEl;
 }
-if (!age || !wkg || !hcm) {
-  showAlert(`
-    <div class="alert-title">Please fill in</div>
-    <div class="alert-text">Age, Weight and Height</div>
-  `);
+
+if (!wkg) {
+  weightEl.classList.add('input-error');
+  firstInvalid = firstInvalid || weightEl;
+}
+
+if (!hcm) {
+  heightEl.classList.add('input-error');
+  firstInvalid = firstInvalid || heightEl;
+}
+
+// لو في field ناقص
+if (firstInvalid) {
+  firstInvalid.scrollIntoView({
+    behavior: 'smooth',
+    block: 'center'
+  });
+  firstInvalid.focus();
   return;
 }
 
+
+const act = parseFloat(document.getElementById('activity').value);
+const goal = currentGoal;
+const disease = document.getElementById('disease').value;
 
 
   const bmr = gender==='male'
@@ -1388,6 +1420,11 @@ window.addEventListener('load', calculate);
 function closeAlert() {
   document.getElementById('nice-alert').style.display = 'none';
 }
+	['age','weight','height'].forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener('input', () => {
+    el.classList.remove('input-error');
+
 
 </script>
 </body>

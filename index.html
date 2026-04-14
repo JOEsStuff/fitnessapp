@@ -893,6 +893,7 @@ nav {
 .input-error {
   border-color: #ef4444 !important; /* Red */
   box-shadow: 0 0 0 3px rgba(239,68,68,0.25) !important;
+}
 
 </style>
 </head>
@@ -1411,7 +1412,7 @@ document.getElementById('results-col').innerHTML = `
 }
 
 /* ── INIT ──────────────────────────────────────── */
-window.addEventListener('load', calculate);
+/*window.addEventListener('load', calculate);*/
 /*function showAlert(msg) {
   document.querySelector('.alert-message').textContent = msg;
   document.getElementById('nice-alert').style.display = 'flex';
@@ -1424,6 +1425,8 @@ function closeAlert() {
   const el = document.getElementById(id);
   el.addEventListener('input', () => {
     el.classList.remove('input-error');
+  });
+});
 
 
 </script>

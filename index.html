@@ -551,24 +551,42 @@ nav {
     line-height: 1.7; color: #92400e;
   }
 
-  /* ─── DAILY BLUEPRINT ─────────────────────────── */
-  .blueprint { margin-top: 3rem; }
+ /* ─── DAILY BLUEPRINT ─────────────────────────── */
+.blueprint { margin-top: 3rem; }
 
-  .blueprint-header {
-    display: flex; align-items: flex-end; justify-content: space-between;
-    margin-bottom: 1.5rem;
-  }
+.blueprint-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
 
-  .bp-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 3rem; font-weight: 800; letter-spacing: -0.5px;
-    color: var(--text);
-  }
+.bp-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  display: flex;
+  gap: 0.5rem;
+}
 
-  .bp-sub { font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem; }
+/* Daily = white */
+.bp-daily {
+  color: #ffffff;
+}
 
-  .bp-actions { display: flex; gap: 0.6rem; }
+/* Blueprint = blue */
+.bp-blue {
+  color: #2b7ff5;
+}
 
+.bp-sub {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 0.2rem;
+}
+
+.bp-actions { display: flex; gap: 0.6rem; }
   .btn-sm {
     padding: 0.48rem 1.1rem;
     border-radius: 100px;
@@ -996,7 +1014,10 @@ nav {
 <section class="blueprint" id="blueprint" style="display:none">
   <div class="blueprint-header">
     <div>
-      <div class="bp-title">Daily Blueprint</div>
+      <div class="bp-title">
+  <span class="bp-daily">Daily</span>
+  <span class="bp-blue">Blueprint</span>
+</div>
       <div class="bp-sub" id="bp-sub">Recommended meal structure</div>
     </div>
   </div>
